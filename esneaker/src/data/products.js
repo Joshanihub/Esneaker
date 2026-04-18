@@ -11,18 +11,18 @@ export const products = [
         name: "Carbon Black",
         hex: "#1A1A1A",
         images: [
-          "https://picsum.photos/seed/apex1-black/800/800",
-          "https://picsum.photos/seed/apex1-black-2/800/800",
-          "https://picsum.photos/seed/apex1-black-3/800/800"
+          "https://picsum.photos/seed/sneaker-black-001/800/800",
+          "https://picsum.photos/seed/sneaker-black-001-2/800/800",
+          "https://picsum.photos/seed/sneaker-black-001-3/800/800"
         ]
       },
       {
         name: "Volt Yellow",
         hex: "#E8FF00",
         images: [
-          "https://picsum.photos/seed/apex1-volt/800/800",
-          "https://picsum.photos/seed/apex1-volt-2/800/800",
-          "https://picsum.photos/seed/apex1-volt-3/800/800"
+          "https://picsum.photos/seed/sneaker-yellow-001/800/800",
+          "https://picsum.photos/seed/sneaker-yellow-001-2/800/800",
+          "https://picsum.photos/seed/sneaker-yellow-001-3/800/800"
         ]
       }
     ],
@@ -53,9 +53,9 @@ export const products = [
         name: "Stealth Gray",
         hex: "#444440",
         images: [
-          "https://picsum.photos/seed/velocity2-gray/800/800",
-          "https://picsum.photos/seed/velocity2-gray-2/800/800",
-          "https://picsum.photos/seed/velocity2-gray-3/800/800"
+          "https://picsum.photos/seed/sneaker-gray-002/800/800",
+          "https://picsum.photos/seed/sneaker-gray-002-2/800/800",
+          "https://picsum.photos/seed/sneaker-gray-002-3/800/800"
         ]
       }
     ],
@@ -86,18 +86,18 @@ export const products = [
         name: "Desert Sand",
         hex: "#D4A574",
         images: [
-          "https://picsum.photos/seed/nomad3-sand/800/800",
-          "https://picsum.photos/seed/nomad3-sand-2/800/800",
-          "https://picsum.photos/seed/nomad3-sand-3/800/800"
+          "https://picsum.photos/seed/sneaker-sand-003/800/800",
+          "https://picsum.photos/seed/sneaker-sand-003-2/800/800",
+          "https://picsum.photos/seed/sneaker-sand-003-3/800/800"
         ]
       },
       {
         name: "Ocean Blue",
         hex: "#2C5F88",
         images: [
-          "https://picsum.photos/seed/nomad3-blue/800/800",
-          "https://picsum.photos/seed/nomad3-blue-2/800/800",
-          "https://picsum.photos/seed/nomad3-blue-3/800/800"
+          "https://picsum.photos/seed/sneaker-blue-003/800/800",
+          "https://picsum.photos/seed/sneaker-blue-003-2/800/800",
+          "https://picsum.photos/seed/sneaker-blue-003-3/800/800"
         ]
       }
     ],
@@ -128,9 +128,9 @@ export const products = [
         name: "Matte Black",
         hex: "#0A0A0A",
         images: [
-          "https://picsum.photos/seed/phantom4-black/800/800",
-          "https://picsum.photos/seed/phantom4-black-2/800/800",
-          "https://picsum.photos/seed/phantom4-black-3/800/800"
+          "https://picsum.photos/seed/sneaker-black-004/800/800",
+          "https://picsum.photos/seed/sneaker-black-004-2/800/800",
+          "https://picsum.photos/seed/sneaker-black-004-3/800/800"
         ]
       }
     ],
@@ -161,9 +161,9 @@ export const products = [
         name: "Fire Red",
         hex: "#FF3D00",
         images: [
-          "https://picsum.photos/seed/strike5-red/800/800",
-          "https://picsum.photos/seed/strike5-red-2/800/800",
-          "https://picsum.photos/seed/strike5-red-3/800/800"
+          "https://picsum.photos/seed/sneaker-red-005/800/800",
+          "https://picsum.photos/seed/sneaker-red-005-2/800/800",
+          "https://picsum.photos/seed/sneaker-red-005-3/800/800"
         ]
       }
     ],
@@ -194,9 +194,9 @@ export const products = [
         name: "Stone White",
         hex: "#F5F5F0",
         images: [
-          "https://picsum.photos/seed/urban6-white/800/800",
-          "https://picsum.photos/seed/urban6-white-2/800/800",
-          "https://picsum.photos/seed/urban6-white-3/800/800"
+          "https://picsum.photos/seed/sneaker-white-006/800/800",
+          "https://picsum.photos/seed/sneaker-white-006-2/800/800",
+          "https://picsum.photos/seed/sneaker-white-006-3/800/800"
         ]
       }
     ],
@@ -227,9 +227,9 @@ export const products = [
         name: "Neon Green",
         hex: "#39FF14",
         images: [
-          "https://picsum.photos/seed/turbo7-green/800/800",
-          "https://picsum.photos/seed/turbo7-green-2/800/800",
-          "https://picsum.photos/seed/turbo7-green-3/800/800"
+          "https://picsum.photos/seed/sneaker-green-007/800/800",
+          "https://picsum.photos/seed/sneaker-green-007-2/800/800",
+          "https://picsum.photos/seed/sneaker-green-007-3/800/800"
         ]
       }
     ],
@@ -260,9 +260,9 @@ export const products = [
         name: "Midnight Navy",
         hex: "#191970",
         images: [
-          "https://picsum.photos/seed/shadow8-navy/800/800",
-          "https://picsum.photos/seed/shadow8-navy-2/800/800",
-          "https://picsum.photos/seed/shadow8-navy-3/800/800"
+          "https://picsum.photos/seed/sneaker-navy-008/800/800",
+          "https://picsum.photos/seed/sneaker-navy-008-2/800/800",
+          "https://picsum.photos/seed/sneaker-navy-008-3/800/800"
         ]
       }
     ],
@@ -293,9 +293,9 @@ export const products = [
         name: "Anthracite",
         hex: "#303030",
         images: [
-          "https://picsum.photos/seed/fusion9-anthracite/800/800",
-          "https://picsum.photos/seed/fusion9-anthracite-2/800/800",
-          "https://picsum.photos/seed/fusion9-anthracite-3/800/800"
+          "https://picsum.photos/seed/sneaker-gray-009/800/800",
+          "https://picsum.photos/seed/sneaker-gray-009-2/800/800",
+          "https://picsum.photos/seed/sneaker-gray-009-3/800/800"
         ]
       }
     ],
@@ -326,9 +326,9 @@ export const products = [
         name: "Earth Brown",
         hex: "#8B4513",
         images: [
-          "https://picsum.photos/seed/element10-brown/800/800",
-          "https://picsum.photos/seed/element10-brown-2/800/800",
-          "https://picsum.photos/seed/element10-brown-3/800/800"
+          "https://picsum.photos/seed/sneaker-brown-010/800/800",
+          "https://picsum.photos/seed/sneaker-brown-010-2/800/800",
+          "https://picsum.photos/seed/sneaker-brown-010-3/800/800"
         ]
       }
     ],
@@ -359,9 +359,9 @@ export const products = [
         name: "Charcoal Grey",
         hex: "#36454F",
         images: [
-          "https://picsum.photos/seed/metro11-charcoal/800/800",
-          "https://picsum.photos/seed/metro11-charcoal-2/800/800",
-          "https://picsum.photos/seed/metro11-charcoal-3/800/800"
+          "https://picsum.photos/seed/sneaker-gray-011/800/800",
+          "https://picsum.photos/seed/sneaker-gray-011-2/800/800",
+          "https://picsum.photos/seed/sneaker-gray-011-3/800/800"
         ]
       }
     ],
@@ -392,9 +392,9 @@ export const products = [
         name: "Sky Blue",
         hex: "#87CEEB",
         images: [
-          "https://picsum.photos/seed/aero12-sky/800/800",
-          "https://picsum.photos/seed/aero12-sky-2/800/800",
-          "https://picsum.photos/seed/aero12-sky-3/800/800"
+          "https://picsum.photos/seed/sneaker-blue-012/800/800",
+          "https://picsum.photos/seed/sneaker-blue-012-2/800/800",
+          "https://picsum.photos/seed/sneaker-blue-012-3/800/800"
         ]
       }
     ],

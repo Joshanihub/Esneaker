@@ -148,6 +148,7 @@ const handleInput = (event) => {
   background: transparent;
   border: none;
   outline: none;
+  appearance: textfield;
   -moz-appearance: textfield;
 }
 

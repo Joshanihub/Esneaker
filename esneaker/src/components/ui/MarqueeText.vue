@@ -33,7 +33,7 @@ const props = defineProps({
 const isPaused = ref(false)
 
 const animationStyle = computed(() => {
-  const duration = props.text.length * 0.1 * (30 / props.speed)
+  const duration = props.text.length * 0.05 * (30 / props.speed)
   const direction = props.direction === 'left' ? 'normal' : 'reverse'
   
   return {

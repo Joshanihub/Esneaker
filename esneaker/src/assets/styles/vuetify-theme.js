@@ -1,5 +1,3 @@
-import { createVuetify } from 'vuetify'
-
 export const strideHausTheme = {
   defaultTheme: 'stridehaus',
   themes: {
@@ -16,43 +14,5 @@ export const strideHausTheme = {
         warning: '#FB8C00',
       }
     }
-  },
-  defaults: {
-    VBtn: {
-      rounded: false,
-      elevation: 0,
-      variant: 'flat',
-      class: 'text-uppercase',
-      style: 'letter-spacing: 0.1em; font-weight: 700;'
-    },
-    VCard: {
-      rounded: false,
-      elevation: 0,
-      variant: 'outlined'
-    },
-    VTextField: {
-      variant: 'outlined',
-      color: 'primary',
-      density: 'comfortable'
-    },
-    VSelect: {
-      variant: 'outlined',
-      color: 'primary',
-      density: 'comfortable'
-    },
-    VNavigationDrawer: {
-      elevation: 8
-    },
-    VChip: {
-      rounded: false,
-      variant: 'flat'
-    },
-    VBadge: {
-      color: 'primary'
-    }
   }
 }
-
-export const vuetify = createVuetify({
-  theme: strideHausTheme
-})

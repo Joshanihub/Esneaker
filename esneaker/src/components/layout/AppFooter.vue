@@ -4,7 +4,7 @@
     <div class="footer-marquee">
       <MarqueeText 
         text="FREE SHIPPING OVER $100 · NEW DROPS EVERY FRIDAY · LIMITED STOCK · JOIN THE WAITLIST · "
-        :speed="30"
+        :speed="25"
         direction="left"
       />
     </div>

@@ -14,7 +14,7 @@
             :key="link.name"
             :to="link.path"
             class="nav-link"
-            :class="{ 'active': $route.path === link.path }"
+            :class="{ 'active': route.path === link.path }"
           >
             {{ link.name }}
           </router-link>
@@ -88,10 +88,11 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 
 const router = useRouter()
+const route = useRoute()
 const cartStore = useCartStore()
 
 const isScrolled = ref(false)

@@ -9,6 +9,7 @@ import App from './App.vue'
 import router from './router'
 import { strideHausTheme } from './assets/styles/vuetify-theme'
 import './assets/styles/main.scss'
+import directivesPlugin from './directives'
 
 // Create Vuetify instance
 const vuetify = createVuetify({
@@ -55,4 +56,5 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.use(vuetify)
+app.use(directivesPlugin)
 app.mount('#app')
