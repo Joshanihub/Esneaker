@@ -71,6 +71,19 @@ export function useScrollReveal() {
 
   onMounted(() => {
     setupObserver()
+    
+    // Check for elements already in view after a short delay
+    setTimeout(() => {
+      elements.forEach(element => {
+        const rect = element.getBoundingClientRect()
+        const isInView = rect.top < window.innerHeight && rect.bottom > 0
+        
+        if (isInView && !element.classList.contains('revealed')) {
+          revealElement(element)
+          observer.unobserve(element)
+        }
+      })
+    }, 100)
   })
 
   onUnmounted(() => {
