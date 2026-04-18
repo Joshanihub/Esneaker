@@ -241,33 +241,6 @@ body {
     repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.1) 35px, rgba(255,255,255,.1) 70px);
 }
 
-/* Custom Cursor (desktop only) */
-@media (min-width: 1280px) {
-  .custom-cursor {
-    position: fixed;
-    width: 8px;
-    height: 8px;
-    background-color: var(--color-accent);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    transition: transform 100ms var(--ease-spring);
-  }
-
-  .cursor-follower {
-    position: fixed;
-    width: 40px;
-    height: 40px;
-    border: 2px solid var(--color-accent);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
-    transform: translate(-50%, -50%);
-    transition: all 200ms var(--ease-smooth);
-    mix-blend-mode: difference;
-  }
-}
 
 /* Responsive Typography */
 @media (max-width: 600px) {
