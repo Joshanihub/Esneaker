@@ -11,9 +11,9 @@
               :key="category"
               class="category-pill"
               :class="{ 'active': activeCategory === category }"
-              @click="setCategory(category)"
+              @click="handleCategorySelection(category)"
             >
-              {{ category.charAt(0).toUpperCase() + category.slice(1) }}
+              {{ formatCategoryName(category) }}
             </button>
           </div>
           
@@ -21,7 +21,7 @@
           <div class="sort-controls">
             <v-select
               v-model="sortBy"
-              :items="sortOptions"
+              :items="SORT_OPTIONS"
               item-title="label"
               item-value="value"
               variant="outlined"
@@ -63,9 +63,9 @@
         <div class="empty-icon">
           <v-icon size="64" color="text-muted">mdi-shoe-heel</v-icon>
         </div>
-        <h2 class="empty-title">NO DROPS MATCH YOUR VIBE</h2>
-        <p class="empty-text">Try adjusting your filters or search terms</p>
-        <button class="btn btn-secondary" @click="resetFilters">
+        <h2 class="empty-title">{{ EMPTY_STATE_MESSAGES.title }}</h2>
+        <p class="empty-text">{{ EMPTY_STATE_MESSAGES.subtitle }}</p>
+        <button class="btn btn-secondary" @click="handleFilterReset">
           RESET FILTERS
         </button>
       </div>
@@ -74,43 +74,48 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useProductsStore } from '@/stores/products'
 import ProductCard from '@/components/ui/ProductCard.vue'
+import { SORT_OPTIONS, EMPTY_STATE_MESSAGES, SCROLL_THRESHOLD } from '@/constants/productGrid'
 
 const productsStore = useProductsStore()
 const { categories, filteredProducts } = storeToRefs(productsStore)
-
 const { activeCategory, searchQuery, sortBy } = storeToRefs(productsStore)
 
 const isSticky = ref(false)
 
-const sortOptions = [
-  { label: 'Newest', value: 'newest' },
-  { label: 'Price: Low to High', value: 'price-asc' },
-  { label: 'Price: High to Low', value: 'price-desc' },
-  { label: 'Name: A to Z', value: 'name' }
-]
-
-const handleScroll = () => {
-  isSticky.value = window.scrollY > 200
+const checkScrollPosition = () => {
+  isSticky.value = window.scrollY > SCROLL_THRESHOLD
 }
 
-const setCategory = (category) => {
+const handleCategorySelection = (category) => {
   productsStore.setCategory(category)
 }
 
-const resetFilters = () => {
+const handleFilterReset = () => {
   productsStore.resetFilters()
 }
 
+const formatCategoryName = (category) => {
+  return category.charAt(0).toUpperCase() + category.slice(1)
+}
+
+const setupScrollListener = () => {
+  window.addEventListener('scroll', checkScrollPosition)
+}
+
+const cleanupScrollListener = () => {
+  window.removeEventListener('scroll', checkScrollPosition)
+}
+
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
+  setupScrollListener()
 })
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
+  cleanupScrollListener()
 })
 </script>
 

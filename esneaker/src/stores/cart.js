@@ -1,38 +1,42 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
+import { useLocalStorage } from '@/composables/useLocalStorage'
+import { CART_STORAGE_KEY } from '@/constants/storage'
 
 export const useCartStore = defineStore('cart', () => {
   // State
   const items = ref([])
-
-  // Load cart from localStorage on init
-  const savedCart = localStorage.getItem('stridehaus-cart')
-  if (savedCart) {
-    try {
-      items.value = JSON.parse(savedCart)
-    } catch (error) {
-      console.error('Failed to load cart from localStorage:', error)
+  
+  // Use localStorage composable for cart persistence
+  const { saveData, loadData, clearData } = useLocalStorage(CART_STORAGE_KEY)
+  
+  // Initialize cart from localStorage
+  const initializeCart = () => {
+    const savedCart = loadData()
+    if (savedCart) {
+      items.value = savedCart
     }
   }
+  
+  // Initialize on store creation
+  initializeCart()
 
   // Persist cart to localStorage
   watch(
     items,
     (newItems) => {
-      localStorage.setItem('stridehaus-cart', JSON.stringify(newItems))
+      saveData(newItems)
     },
     { deep: true }
   )
 
   // Getters
   const itemCount = computed(() => {
-    return items.value.reduce((total, item) => total + item.quantity, 0)
+    return calculateTotalItemCount(items.value)
   })
 
   const subtotal = computed(() => {
-    return items.value.reduce((total, item) => {
-      return total + (item.product.price * item.quantity)
-    }, 0)
+    return calculateSubtotal(items.value)
   })
 
   const isEmpty = computed(() => {
@@ -41,34 +45,17 @@ export const useCartStore = defineStore('cart', () => {
 
   // Actions
   const addItem = (product, colorway, size, quantity = 1) => {
-    const existingItemIndex = items.value.findIndex(
-      item => 
-        item.product.id === product.id && 
-        item.colorway.name === colorway.name && 
-        item.size === size
-    )
+    const existingItemIndex = findExistingItemIndex(product.id, colorway.name, size)
 
     if (existingItemIndex !== -1) {
-      // Increment quantity if item already exists
-      items.value[existingItemIndex].quantity += quantity
+      incrementItemQuantity(existingItemIndex, quantity)
     } else {
-      // Add new item
-      items.value.push({
-        product,
-        colorway,
-        size,
-        quantity
-      })
+      addNewItem(product, colorway, size, quantity)
     }
   }
 
   const removeItem = (productId, colorwayName, size) => {
-    const itemIndex = items.value.findIndex(
-      item => 
-        item.product.id === productId && 
-        item.colorway.name === colorwayName && 
-        item.size === size
-    )
+    const itemIndex = findExistingItemIndex(productId, colorwayName, size)
 
     if (itemIndex !== -1) {
       items.value.splice(itemIndex, 1)
@@ -76,12 +63,7 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   const updateQuantity = (productId, colorwayName, size, newQuantity) => {
-    const item = items.value.find(
-      item => 
-        item.product.id === productId && 
-        item.colorway.name === colorwayName && 
-        item.size === size
-    )
+    const item = findExistingItem(productId, colorwayName, size)
 
     if (item) {
       if (newQuantity <= 0) {
@@ -94,9 +76,56 @@ export const useCartStore = defineStore('cart', () => {
 
   const clearCart = () => {
     items.value = []
+    clearData()
   }
 
   const getItemTotal = (item) => {
+    return calculateItemTotal(item)
+  }
+  
+  // Helper functions
+  const findExistingItemIndex = (productId, colorwayName, size) => {
+    return items.value.findIndex(
+      item => 
+        item.product.id === productId && 
+        item.colorway.name === colorwayName && 
+        item.size === size
+    )
+  }
+  
+  const findExistingItem = (productId, colorwayName, size) => {
+    return items.value.find(
+      item => 
+        item.product.id === productId && 
+        item.colorway.name === colorwayName && 
+        item.size === size
+    )
+  }
+  
+  const incrementItemQuantity = (itemIndex, quantity) => {
+    items.value[itemIndex].quantity += quantity
+  }
+  
+  const addNewItem = (product, colorway, size, quantity) => {
+    items.value.push({
+      product,
+      colorway,
+      size,
+      quantity
+    })
+  }
+  
+  const calculateTotalItemCount = (cartItems) => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0)
+  }
+  
+  const calculateSubtotal = (cartItems) => {
+    return cartItems.reduce((total, item) => {
+      return total + (item.product.price * item.quantity)
+    }, 0)
+  }
+  
+  const calculateItemTotal = (item) => {
     return item.product.price * item.quantity
   }
 

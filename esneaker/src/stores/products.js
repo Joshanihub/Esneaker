@@ -1,78 +1,33 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { products } from '@/data/products.js'
+import { DEFAULT_CATEGORY, DEFAULT_SORT, FEATURED_PRODUCTS_LIMIT } from '@/constants/products'
 
 export const useProductsStore = defineStore('products', () => {
   // State
   const allProducts = ref(products)
-  const activeCategory = ref('all')
+  const activeCategory = ref(DEFAULT_CATEGORY)
   const searchQuery = ref('')
-  const sortBy = ref('newest')
+  const sortBy = ref(DEFAULT_SORT)
 
   // Getters
   const categories = computed(() => {
-    const cats = ['all', ...new Set(allProducts.value.map(p => p.category))]
-    return cats
+    return extractUniqueCategories()
   })
 
   const filteredProducts = computed(() => {
-    let filtered = [...allProducts.value]
-
-    // Filter by category
-    if (activeCategory.value !== 'all') {
-      filtered = filtered.filter(p => p.category === activeCategory.value)
-    }
-
-    // Filter by search query
-    if (searchQuery.value.trim()) {
-      const query = searchQuery.value.toLowerCase()
-      filtered = filtered.filter(p => 
-        p.name.toLowerCase().includes(query) ||
-        p.tagline.toLowerCase().includes(query) ||
-        p.category.toLowerCase().includes(query) ||
-        p.description.toLowerCase().includes(query)
-      )
-    }
-
-    // Sort
-    switch (sortBy.value) {
-      case 'price-asc':
-        filtered.sort((a, b) => a.price - b.price)
-        break
-      case 'price-desc':
-        filtered.sort((a, b) => b.price - a.price)
-        break
-      case 'name':
-        filtered.sort((a, b) => a.name.localeCompare(b.name))
-        break
-      case 'newest':
-      default:
-        // Sort by new/limited first, then by name
-        filtered.sort((a, b) => {
-          const aPriority = (a.isNew ? 2 : a.isLimited ? 1 : 0)
-          const bPriority = (b.isNew ? 2 : b.isLimited ? 1 : 0)
-          if (aPriority !== bPriority) return bPriority - aPriority
-          return a.name.localeCompare(b.name)
-        })
-        break
-    }
-
-    return filtered
+    let products = [...allProducts.value]
+    
+    products = applyCategoryFilter(products)
+    products = applySearchFilter(products)
+    products = applySorting(products)
+    
+    return products
   })
 
   const featuredProducts = computed(() => {
-    return allProducts.value
-      .filter(p => p.isNew || p.isLimited)
-      .slice(0, 4)
+    return getFeaturedProducts()
   })
-
-  const getProductById = (id) => {
-    return allProducts.value.find(p => p.id === id)
-  }
-
-  const getProductsByCategory = (category) => {
-    return allProducts.value.filter(p => p.category === category)
-  }
 
   // Actions
   const setCategory = (category) => {
@@ -88,9 +43,110 @@ export const useProductsStore = defineStore('products', () => {
   }
 
   const resetFilters = () => {
-    activeCategory.value = 'all'
+    activeCategory.value = DEFAULT_CATEGORY
     searchQuery.value = ''
-    sortBy.value = 'newest'
+    sortBy.value = DEFAULT_SORT
+  }
+
+  const getProductById = (id) => {
+    return findProductById(id)
+  }
+
+  const getProductsByCategory = (category) => {
+    return findProductsByCategory(category)
+  }
+  
+  // Helper functions
+  const extractUniqueCategories = () => {
+    const uniqueCategories = new Set(allProducts.value.map(product => product.category))
+    return [DEFAULT_CATEGORY, ...uniqueCategories]
+  }
+  
+  const applyCategoryFilter = (products) => {
+    if (activeCategory.value === DEFAULT_CATEGORY) {
+      return products
+    }
+    
+    return products.filter(product => product.category === activeCategory.value)
+  }
+  
+  const applySearchFilter = (products) => {
+    if (!searchQuery.value.trim()) {
+      return products
+    }
+    
+    const query = searchQuery.value.toLowerCase()
+    return products.filter(product => matchesSearchQuery(product, query))
+  }
+  
+  const matchesSearchQuery = (product, query) => {
+    const searchableFields = [
+      product.name,
+      product.tagline,
+      product.category,
+      product.description
+    ]
+    
+    return searchableFields.some(field => 
+      field.toLowerCase().includes(query)
+    )
+  }
+  
+  const applySorting = (products) => {
+    switch (sortBy.value) {
+      case 'price-asc':
+        return sortProductsByPrice(products, 'asc')
+      case 'price-desc':
+        return sortProductsByPrice(products, 'desc')
+      case 'name':
+        return sortProductsByName(products)
+      case 'newest':
+      default:
+        return sortProductsByPriority(products)
+    }
+  }
+  
+  const sortProductsByPrice = (products, order) => {
+    return products.sort((a, b) => {
+      return order === 'asc' ? a.price - b.price : b.price - a.price
+    })
+  }
+  
+  const sortProductsByName = (products) => {
+    return products.sort((a, b) => a.name.localeCompare(b.name))
+  }
+  
+  const sortProductsByPriority = (products) => {
+    return products.sort((a, b) => {
+      const aPriority = calculateProductPriority(a)
+      const bPriority = calculateProductPriority(b)
+      
+      if (aPriority !== bPriority) {
+        return bPriority - aPriority
+      }
+      
+      return a.name.localeCompare(b.name)
+    })
+  }
+  
+  const calculateProductPriority = (product) => {
+    if (product.isNew) return 2
+    if (product.isLimited) return 1
+    return 0
+  }
+  
+  const getFeaturedProducts = () => {
+    return allProducts.value
+      .filter(product => product.isNew || product.isLimited)
+      .slice(0, FEATURED_PRODUCTS_LIMIT)
+  }
+  
+  const findProductById = (id) => {
+    return allProducts.value.find(product => product.id === id)
+  }
+  
+  const findProductsByCategory = (category) => {
+    return allProducts.value.filter(product => product.category === category)
   }
 
   return {

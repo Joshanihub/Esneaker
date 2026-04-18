@@ -10,7 +10,7 @@
         <!-- Navigation (Desktop) -->
         <nav class="nav-desktop" v-if="$vuetify.display.mdAndUp">
           <router-link 
-            v-for="link in navLinks" 
+            v-for="link in NAVIGATION_LINKS" 
             :key="link.name"
             :to="link.path"
             class="nav-link"
@@ -25,7 +25,7 @@
           <!-- Cart Icon -->
           <button 
             class="cart-button"
-            @click="toggleCart"
+            @click="openCartDrawer"
             aria-label="Shopping Cart"
           >
             <v-icon size="20">mdi-shopping</v-icon>
@@ -58,7 +58,7 @@
       class="mobile-nav-drawer"
     >
       <div class="mobile-nav-header">
-        <button class="close-button" @click="mobileMenuOpen = false">
+        <button class="close-button" @click="closeMobileMenu">
           <v-icon size="24">mdi-close</v-icon>
         </button>
         <div class="mobile-logo">STRIDEHAUS</div>
@@ -66,18 +66,18 @@
       
       <nav class="mobile-nav">
         <router-link
-          v-for="link in navLinks"
+          v-for="link in NAVIGATION_LINKS"
           :key="link.name"
           :to="link.path"
           class="mobile-nav-link"
-          @click="mobileMenuOpen = false"
+          @click="closeMobileMenu"
         >
           {{ link.name }}
         </router-link>
       </nav>
 
       <div class="mobile-nav-footer">
-        <button class="cart-button-mobile" @click="toggleCart">
+        <button class="cart-button-mobile" @click="openCartDrawer">
           <v-icon size="20">mdi-shopping</v-icon>
           <span>Cart ({{ cartStore.itemCount }})</span>
         </button>
@@ -88,29 +88,21 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
+import { NAVIGATION_LINKS, SCROLL_THRESHOLD } from '@/constants/navigation'
 
-const router = useRouter()
 const route = useRoute()
 const cartStore = useCartStore()
 
 const isScrolled = ref(false)
 const mobileMenuOpen = ref(false)
 
-const navLinks = [
-  { name: 'Home', path: '/' },
-  { name: 'Shop', path: '/shop' },
-  { name: 'New Drops', path: '/shop?category=new' },
-  { name: 'Limited', path: '/shop?category=limited' }
-]
-
-const handleScroll = () => {
-  isScrolled.value = window.scrollY > 80
+const checkScrollPosition = () => {
+  isScrolled.value = window.scrollY > SCROLL_THRESHOLD
 }
 
-const toggleCart = () => {
-  // Emit event to parent to open cart drawer
+const openCartDrawer = () => {
   document.dispatchEvent(new CustomEvent('toggle-cart'))
 }
 
@@ -118,12 +110,16 @@ const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value
 }
 
+const closeMobileMenu = () => {
+  mobileMenuOpen.value = false
+}
+
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
+  window.addEventListener('scroll', checkScrollPosition)
 })
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('scroll', checkScrollPosition)
 })
 </script>
 

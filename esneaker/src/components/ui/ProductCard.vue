@@ -1,5 +1,5 @@
 <template>
-  <div class="product-card" @click="navigateToProduct">
+  <div class="product-card" @click="navigateToProductPage">
     <!-- Image Area -->
     <div class="product-image-container">
       <img 
@@ -11,16 +11,20 @@
       
       <!-- Badges -->
       <div class="product-badges">
-        <span v-if="product.isNew" class="badge badge-new">NEW</span>
-        <span v-if="product.isLimited" class="badge badge-limited">LIMITED</span>
-        <span v-if="product.originalPrice" class="badge badge-sale">SALE</span>
+        <span 
+          v-for="badge in getProductBadges()" 
+          :key="badge.type"
+          :class="['badge', `badge-${badge.type}`]"
+        >
+          {{ badge.text }}
+        </span>
       </div>
       
       <!-- Quick Add Button -->
       <div class="quick-add-container">
         <button 
           class="quick-add-btn"
-          @click.stop="handleQuickAdd"
+          @click.stop="handleQuickAddToCart"
           :disabled="!product.inStock"
         >
           QUICK ADD +
@@ -41,12 +45,12 @@
       <div class="product-rating">
         <div class="rating-stars">
           <v-icon 
-            v-for="star in 5" 
+            v-for="star in RATING_STARS" 
             :key="star"
             size="12"
-            :color="star <= Math.floor(product.rating) ? 'primary' : 'text-muted'"
+            :color="getStarColor(star, product.rating)"
           >
-            {{ star <= Math.floor(product.rating) ? 'mdi-star' : 'mdi-star-outline' }}
+            {{ getStarIcon(star, product.rating) }}
           </v-icon>
         </div>
         <span class="rating-count">({{ product.reviewCount }})</span>
@@ -58,6 +62,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
+import { CART_TOGGLE_EVENT, BADGE_TYPES, RATING_STARS } from '@/constants/productCard'
 
 const props = defineProps({
   product: {
@@ -69,21 +74,64 @@ const props = defineProps({
 const router = useRouter()
 const cartStore = useCartStore()
 
-const navigateToProduct = () => {
+const navigateToProductPage = () => {
   router.push(`/shop/${props.product.id}`)
 }
 
-const handleQuickAdd = () => {
-  if (!props.product.inStock) return
+const handleQuickAddToCart = () => {
+  if (!isProductInStock()) return
   
-  // Add first available colorway and size
+  const defaultProductOptions = getDefaultProductOptions()
+  addProductToCart(defaultProductOptions)
+  showCartDrawer()
+}
+
+const isProductInStock = () => {
+  return props.product.inStock
+}
+
+const getDefaultProductOptions = () => {
   const firstColorway = props.product.colorways[0]
   const firstSize = props.product.sizes[0]
   
-  cartStore.addItem(props.product, firstColorway, firstSize, 1)
+  return {
+    colorway: firstColorway,
+    size: firstSize
+  }
+}
+
+const addProductToCart = (options) => {
+  cartStore.addItem(props.product, options.colorway, options.size, 1)
+}
+
+const showCartDrawer = () => {
+  document.dispatchEvent(new CustomEvent(CART_TOGGLE_EVENT))
+}
+
+const getStarIcon = (starNumber, rating) => {
+  return starNumber <= Math.floor(rating) ? 'mdi-star' : 'mdi-star-outline'
+}
+
+const getStarColor = (starNumber, rating) => {
+  return starNumber <= Math.floor(rating) ? 'primary' : 'text-muted'
+}
+
+const getProductBadges = () => {
+  const badges = []
   
-  // Show cart drawer
-  document.dispatchEvent(new CustomEvent('toggle-cart'))
+  if (props.product.isNew) {
+    badges.push({ type: BADGE_TYPES.NEW, text: 'NEW' })
+  }
+  
+  if (props.product.isLimited) {
+    badges.push({ type: BADGE_TYPES.LIMITED, text: 'LIMITED' })
+  }
+  
+  if (props.product.originalPrice) {
+    badges.push({ type: BADGE_TYPES.SALE, text: 'SALE' })
+  }
+  
+  return badges
 }
 </script>
 

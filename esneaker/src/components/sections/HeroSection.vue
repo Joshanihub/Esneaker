@@ -7,25 +7,31 @@
       <div class="hero-content">
         <!-- Left Column -->
         <div class="hero-left">
-          <div class="hero-label">SS26 COLLECTION</div>
+          <div class="hero-label">{{ HERO_CONTENT.collectionLabel }}</div>
           
           <div class="hero-text">
-            <h1 class="hero-line hero-line-muted">BUILT</h1>
-            <h1 class="hero-line hero-line-primary">FOR THE</h1>
-            <h1 class="hero-line hero-line-accent">RELENTLESS</h1>
+            <h1 
+              v-for="(line, index) in HERO_CONTENT.headlines" 
+              :key="index"
+              :class="['hero-line', line.class]"
+            >
+              {{ line.text }}
+            </h1>
           </div>
           
           <p class="hero-subtext">
-            Engineered for those who refuse to compromise. Every stride a statement, every step a revolution.
+            {{ HERO_CONTENT.subtext }}
           </p>
           
           <div class="hero-actions">
-            <router-link to="/shop" class="btn btn-primary">
-              SHOP NOW
+            <router-link 
+              v-for="action in HERO_CONTENT.actions" 
+              :key="action.text"
+              :to="action.path"
+              :class="['btn', action.class]"
+            >
+              {{ action.text }}
             </router-link>
-            <button class="btn btn-secondary">
-              VIEW LOOKBOOK
-            </button>
           </div>
         </div>
         
@@ -33,29 +39,31 @@
         <div class="hero-right">
           <div class="hero-image-container">
             <img 
-              src="https://picsum.photos/seed/stridehaus-hero-sneaker/600/600" 
-              alt="STRIDEHAUS Hero Sneaker"
+              :src="HERO_CONTENT.heroImage.src" 
+              :alt="HERO_CONTENT.heroImage.alt"
               class="hero-image"
             >
             
             <!-- Floating Badge -->
             <div class="hero-badge">
-              <span class="badge-text">NEW DROP</span>
+              <span class="badge-text">{{ HERO_CONTENT.badge.text }}</span>
             </div>
             
             <!-- Stat Pills -->
             <div class="hero-stats">
-              <div class="stat-pill">
+              <div 
+                v-for="stat in HERO_CONTENT.stats" 
+                :key="stat.label"
+                class="stat-pill"
+              >
                 <AnimatedNumber 
-                  :value="12000" 
-                  suffix="+"
+                  v-if="stat.animated"
+                  :value="stat.value" 
+                  :suffix="stat.suffix"
                   class="stat-number"
                 />
-                <span class="stat-label">Reviews</span>
-                <span class="stat-rating">4.9</span>
-              </div>
-              <div class="stat-pill">
-                <span class="stat-label">Free Shipping</span>
+                <span class="stat-label">{{ stat.label }}</span>
+                <span v-if="stat.rating" class="stat-rating">{{ stat.rating }}</span>
               </div>
             </div>
           </div>
@@ -72,81 +80,94 @@
 import { onMounted } from 'vue'
 import { gsap } from 'gsap'
 import AnimatedNumber from '@/components/ui/AnimatedNumber.vue'
+import { HERO_CONTENT, HERO_ANIMATION_CONFIG } from '@/constants/hero'
+
+const initializeHeroAnimations = () => {
+  const timeline = gsap.timeline()
+  
+  animateHeroTextLines(timeline)
+  animateHeroSubtext(timeline)
+  animateHeroActions(timeline)
+  animateHeroImage(timeline)
+  animateHeroBadge(timeline)
+  animateHeroStats(timeline)
+  animateHeroLabel(timeline)
+  
+  return timeline
+}
+
+const animateHeroTextLines = (timeline) => {
+  const textLines = ['.hero-line-muted', '.hero-line-primary', '.hero-line-accent']
+  
+  textLines.forEach((selector, index) => {
+    timeline.from(selector, {
+      y: HERO_ANIMATION_CONFIG.textLines.yOffset,
+      opacity: 0,
+      duration: HERO_ANIMATION_CONFIG.textLines.duration,
+      ease: HERO_ANIMATION_CONFIG.textLines.ease
+    }, index > 0 ? '-=0.7' : '')
+  })
+}
+
+const animateHeroSubtext = (timeline) => {
+  timeline.from('.hero-subtext', {
+    y: HERO_ANIMATION_CONFIG.subtext.yOffset,
+    opacity: 0,
+    duration: HERO_ANIMATION_CONFIG.subtext.duration,
+    ease: HERO_ANIMATION_CONFIG.subtext.ease
+  }, '-=0.5')
+}
+
+const animateHeroActions = (timeline) => {
+  timeline.from('.hero-actions .btn', {
+    y: HERO_ANIMATION_CONFIG.actions.yOffset,
+    opacity: 0,
+    duration: HERO_ANIMATION_CONFIG.actions.duration,
+    ease: HERO_ANIMATION_CONFIG.actions.ease,
+    stagger: HERO_ANIMATION_CONFIG.actions.stagger
+  }, '-=0.3')
+}
+
+const animateHeroImage = (timeline) => {
+  timeline.from('.hero-image-container', {
+    x: HERO_ANIMATION_CONFIG.image.xOffset,
+    opacity: 0,
+    duration: HERO_ANIMATION_CONFIG.image.duration,
+    ease: HERO_ANIMATION_CONFIG.image.ease
+  }, '-=0.8')
+}
+
+const animateHeroBadge = (timeline) => {
+  timeline.from('.hero-badge', {
+    scale: HERO_ANIMATION_CONFIG.badge.scale,
+    rotation: HERO_ANIMATION_CONFIG.badge.rotation,
+    opacity: 0,
+    duration: HERO_ANIMATION_CONFIG.badge.duration,
+    ease: HERO_ANIMATION_CONFIG.badge.ease
+  }, '-=0.5')
+}
+
+const animateHeroStats = (timeline) => {
+  timeline.from('.stat-pill', {
+    y: HERO_ANIMATION_CONFIG.stats.yOffset,
+    opacity: 0,
+    duration: HERO_ANIMATION_CONFIG.stats.duration,
+    ease: HERO_ANIMATION_CONFIG.stats.ease,
+    stagger: HERO_ANIMATION_CONFIG.stats.stagger
+  }, '-=0.3')
+}
+
+const animateHeroLabel = (timeline) => {
+  timeline.from('.hero-label', {
+    y: HERO_ANIMATION_CONFIG.label.yOffset,
+    opacity: 0,
+    duration: HERO_ANIMATION_CONFIG.label.duration,
+    ease: HERO_ANIMATION_CONFIG.label.ease
+  }, '-=0.8')
+}
 
 onMounted(() => {
-  // GSAP Hero Animations
-  const tl = gsap.timeline()
-  
-  // Hero text lines - staggered entrance
-  tl.from('.hero-line-muted', {
-    y: 60,
-    opacity: 0,
-    duration: 1,
-    ease: 'power4.out'
-  })
-  .from('.hero-line-primary', {
-    y: 60,
-    opacity: 0,
-    duration: 1,
-    ease: 'power4.out'
-  }, '-=0.7')
-  .from('.hero-line-accent', {
-    y: 60,
-    opacity: 0,
-    duration: 1,
-    ease: 'power4.out'
-  }, '-=0.7')
-  
-  // Subtext
-  .from('.hero-subtext', {
-    y: 30,
-    opacity: 0,
-    duration: 0.8,
-    ease: 'power3.out'
-  }, '-=0.5')
-  
-  // CTA buttons
-  .from('.hero-actions .btn', {
-    y: 40,
-    opacity: 0,
-    duration: 0.8,
-    ease: 'power3.out',
-    stagger: 0.1
-  }, '-=0.3')
-  
-  // Right image
-  .from('.hero-image-container', {
-    x: 100,
-    opacity: 0,
-    duration: 1.2,
-    ease: 'power3.out'
-  }, '-=0.8')
-  
-  // Floating badge with spring bounce
-  .from('.hero-badge', {
-    scale: 0,
-    rotation: -180,
-    opacity: 0,
-    duration: 1,
-    ease: 'back.out(1.7)'
-  }, '-=0.5')
-  
-  // Stat pills
-  .from('.stat-pill', {
-    y: 30,
-    opacity: 0,
-    duration: 0.6,
-    ease: 'power2.out',
-    stagger: 0.1
-  }, '-=0.3')
-  
-  // Hero label
-  .from('.hero-label', {
-    y: 20,
-    opacity: 0,
-    duration: 0.6,
-    ease: 'power2.out'
-  }, '-=0.8')
+  initializeHeroAnimations()
 })
 </script>
 

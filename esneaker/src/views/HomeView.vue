@@ -110,9 +110,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useProductsStore } from '@/stores/products'
+import { useNewsletter } from '@/composables/useNewsletter'
 import HeroSection from '@/components/sections/HeroSection.vue'
 import MarqueeText from '@/components/ui/MarqueeText.vue'
 import ProductCard from '@/components/ui/ProductCard.vue'
@@ -121,18 +122,14 @@ import AnimatedNumber from '@/components/ui/AnimatedNumber.vue'
 const productsStore = useProductsStore()
 const { featuredProducts } = storeToRefs(productsStore)
 
-const email = ref('')
+const { email, handleNewsletterSubmit } = useNewsletter()
 
-const handleNewsletterSubmit = () => {
-  if (email.value.trim()) {
-    console.log('Newsletter subscription:', email.value)
-    email.value = ''
-  }
+const initializeHomePage = () => {
+  productsStore.resetFilters()
 }
 
 onMounted(() => {
-  // Initialize any needed data
-  productsStore.resetFilters()
+  initializeHomePage()
 })
 </script>
 

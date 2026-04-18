@@ -3,7 +3,7 @@
     <!-- Marquee Text -->
     <div class="footer-marquee">
       <MarqueeText 
-        text="FREE SHIPPING OVER $100 · NEW DROPS EVERY FRIDAY · LIMITED STOCK · JOIN THE WAITLIST · "
+        :text="MARQUEE_TEXT"
         :speed="25"
         direction="left"
       />
@@ -16,14 +16,14 @@
           <div class="footer-logo">STRIDEHAUS</div>
           <p class="footer-tagline">Cinematic footwear for the relentless.</p>
           <div class="social-links">
-            <a href="#" class="social-link" aria-label="Instagram">
-              <v-icon size="20">mdi-instagram</v-icon>
-            </a>
-            <a href="#" class="social-link" aria-label="Twitter">
-              <v-icon size="20">mdi-twitter</v-icon>
-            </a>
-            <a href="#" class="social-link" aria-label="TikTok">
-              <v-icon size="20">mdi-music-note</v-icon>
+            <a 
+              v-for="social in SOCIAL_LINKS"
+              :key="social.name"
+              :href="social.url"
+              class="social-link"
+              :aria-label="social.name"
+            >
+              <v-icon size="20">{{ social.icon }}</v-icon>
             </a>
           </div>
         </div>
@@ -32,12 +32,10 @@
         <div class="footer-column">
           <h3 class="footer-heading">Shop</h3>
           <ul class="footer-links">
-            <li><router-link to="/shop">All Products</router-link></li>
-            <li><router-link to="/shop?category=running">Running</router-link></li>
-            <li><router-link to="/shop?category=lifestyle">Lifestyle</router-link></li>
-            <li><router-link to="/shop?category=training">Training</router-link></li>
-            <li><router-link to="/shop?category=limited">Limited Edition</router-link></li>
-            <li><a href="#">Sale</a></li>
+            <li v-for="link in FOOTER_LINKS.shop" :key="link.name">
+              <router-link v-if="link.isRouter" :to="link.path">{{ link.name }}</router-link>
+              <a v-else :href="link.path">{{ link.name }}</a>
+            </li>
           </ul>
         </div>
 
@@ -45,12 +43,9 @@
         <div class="footer-column">
           <h3 class="footer-heading">Help</h3>
           <ul class="footer-links">
-            <li><a href="#">FAQ</a></li>
-            <li><a href="#">Returns & Exchanges</a></li>
-            <li><a href="#">Shipping Info</a></li>
-            <li><a href="#">Size Guide</a></li>
-            <li><a href="#">Contact Us</a></li>
-            <li><a href="#">Careers</a></li>
+            <li v-for="link in FOOTER_LINKS.help" :key="link.name">
+              <a :href="link.path">{{ link.name }}</a>
+            </li>
           </ul>
         </div>
 
@@ -84,9 +79,13 @@
       <div class="footer-bottom">
         <p class="copyright">© 2026 STRIDEHAUS. All rights reserved.</p>
         <div class="legal-links">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">Cookie Policy</a>
+          <a 
+            v-for="link in FOOTER_LINKS.legal" 
+            :key="link.name"
+            :href="link.path"
+          >
+            {{ link.name }}
+          </a>
         </div>
       </div>
     </div>
@@ -96,15 +95,27 @@
 <script setup>
 import { ref } from 'vue'
 import MarqueeText from '@/components/ui/MarqueeText.vue'
+import { FOOTER_LINKS, SOCIAL_LINKS, MARQUEE_TEXT } from '@/constants/footer'
 
 const email = ref('')
 
 const handleNewsletterSubmit = () => {
-  if (email.value.trim()) {
-    // Handle newsletter subscription
-    console.log('Newsletter subscription:', email.value)
-    email.value = ''
+  if (isEmailValid(email.value)) {
+    subscribeToNewsletter(email.value)
+    resetEmailInput()
   }
+}
+
+const isEmailValid = (emailAddress) => {
+  return emailAddress.trim().length > 0
+}
+
+const subscribeToNewsletter = (emailAddress) => {
+  console.log('Newsletter subscription:', emailAddress)
+}
+
+const resetEmailInput = () => {
+  email.value = ''
 }
 </script>
 

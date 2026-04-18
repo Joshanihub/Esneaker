@@ -21,9 +21,9 @@
         <div class="empty-icon">
           <v-icon size="64" color="text-muted">mdi-shopping-outline</v-icon>
         </div>
-        <h3 class="empty-title">YOUR BAG IS EMPTY</h3>
-        <p class="empty-text">Looks like you haven't added anything yet</p>
-        <router-link to="/shop" class="btn btn-primary" @click="closeCart">
+        <h3 class="empty-title">{{ EMPTY_CART_MESSAGES.title }}</h3>
+        <p class="empty-text">{{ EMPTY_CART_MESSAGES.subtitle }}</p>
+        <router-link to="/shop" class="btn btn-primary" @click="closeCartDrawer">
           START SHOPPING
         </router-link>
       </div>
@@ -32,7 +32,7 @@
       <div v-else class="cart-items">
         <div
           v-for="item in cartStore.items"
-          :key="`${item.product.id}-${item.colorway.name}-${item.size}`"
+          :key="generateCartItemKey(item)"
           class="cart-item"
         >
           <!-- Product Image -->
@@ -56,7 +56,7 @@
             <div class="quantity-controls">
               <button 
                 class="quantity-btn"
-                @click="updateQuantity(item, item.quantity - 1)"
+                @click="handleQuantityUpdate(item, item.quantity - 1)"
                 :disabled="item.quantity <= 1"
               >
                 <v-icon size="16">mdi-minus</v-icon>
@@ -64,7 +64,7 @@
               <span class="quantity-value">{{ item.quantity }}</span>
               <button 
                 class="quantity-btn"
-                @click="updateQuantity(item, item.quantity + 1)"
+                @click="handleQuantityUpdate(item, item.quantity + 1)"
               >
                 <v-icon size="16">mdi-plus</v-icon>
               </button>
@@ -75,7 +75,7 @@
           <div class="item-remove">
             <button 
               class="remove-button"
-              @click="removeItem(item)"
+              @click="removeCartItem(item)"
               aria-label="Remove item"
             >
               <v-icon size="18">mdi-trash-can-outline</v-icon>
@@ -96,10 +96,10 @@
       </div>
       
       <div class="cart-actions">
-        <router-link to="/checkout" class="btn btn-primary checkout-btn" @click="closeCart">
+        <router-link to="/checkout" class="btn btn-primary checkout-btn" @click="closeCartDrawer">
           CHECKOUT
         </router-link>
-        <button class="continue-shopping-btn" @click="closeCart">
+        <button class="continue-shopping-btn" @click="closeCartDrawer">
           CONTINUE SHOPPING
         </button>
       </div>
@@ -111,34 +111,43 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCartStore } from '@/stores/cart'
+import { CART_TOGGLE_EVENT, EMPTY_CART_MESSAGES } from '@/constants/cart'
 
 const cartStore = useCartStore()
 const { items } = storeToRefs(cartStore)
 
 const drawerOpen = ref(false)
 
-const openCart = () => {
+const openCartDrawer = () => {
   drawerOpen.value = true
 }
 
-const closeCart = () => {
+const closeCartDrawer = () => {
   drawerOpen.value = false
 }
 
-const updateQuantity = (item, newQuantity) => {
-  if (newQuantity <= 0) {
-    removeItem(item)
+const handleQuantityUpdate = (item, newQuantity) => {
+  if (isQuantityInvalid(newQuantity)) {
+    removeCartItem(item)
   } else {
-    cartStore.updateQuantity(
-      item.product.id,
-      item.colorway.name,
-      item.size,
-      newQuantity
-    )
+    updateCartItemQuantity(item, newQuantity)
   }
 }
 
-const removeItem = (item) => {
+const isQuantityInvalid = (quantity) => {
+  return quantity <= 0
+}
+
+const updateCartItemQuantity = (item, quantity) => {
+  cartStore.updateQuantity(
+    item.product.id,
+    item.colorway.name,
+    item.size,
+    quantity
+  )
+}
+
+const removeCartItem = (item) => {
   cartStore.removeItem(
     item.product.id,
     item.colorway.name,
@@ -146,13 +155,24 @@ const removeItem = (item) => {
   )
 }
 
-// Listen for toggle-cart event
+const generateCartItemKey = (item) => {
+  return `${item.product.id}-${item.colorway.name}-${item.size}`
+}
+
+const setupCartEventListeners = () => {
+  document.addEventListener(CART_TOGGLE_EVENT, openCartDrawer)
+}
+
+const cleanupCartEventListeners = () => {
+  document.removeEventListener(CART_TOGGLE_EVENT, openCartDrawer)
+}
+
 onMounted(() => {
-  document.addEventListener('toggle-cart', openCart)
+  setupCartEventListeners()
 })
 
 onUnmounted(() => {
-  document.removeEventListener('toggle-cart', openCart)
+  cleanupCartEventListeners()
 })
 </script>
 
